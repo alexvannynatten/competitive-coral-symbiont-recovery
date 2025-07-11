@@ -8,10 +8,8 @@ Authors: Van Nynatten, A 1; Cunning, R 2; Tietjen, KL 1; Baum, JK 1
 2 Conservation Research Department, John G. Shedd Aquarium, 1200 South DuSable Lake Shore Drive, Chicago, IL 60605, USA.
 
 **Directory map**
-_analyses:_ contains all scripts used to run analyses and generate the figures and tables
-
-_data:_ all raw and intermediate (labelled according to script used to generate) datafiles used in the analyses
-
+_analyses:_ contains all scripts used to run analyses and generate the figures and tables \
+_data:_ all raw and intermediate (labelled according to script used to generate) datafiles used in the analyses \
 _figures_tables:_ find output from analyses
 
 **File details**
