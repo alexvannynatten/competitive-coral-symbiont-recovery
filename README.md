@@ -12,7 +12,7 @@ _analyses:_ contains all scripts used to run analyses and generate the figures a
 _data:_ all raw and intermediate (labelled according to script used to generate) datafiles used in the analyses \
 _figures_tables:_ find output from analyses
 
-**File details**
+**File details** \
 01_symportal_results_df.csv - Tidied SymPortal ITS2 profile count table output for analysis \
 02_coralnet_results_df.csv - Tidied CoralNet visual survey data for analysis \
 04_symbiont_lineages.csv - Symbiont lineage classifications based on Unifrac distances \
