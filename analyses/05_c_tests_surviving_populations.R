@@ -1,5 +1,5 @@
 #####################################################################
-# Last updated 2025-05-25 - Alexander Van Nynatten
+# Last updated 2025-09-07 - Alexander Van Nynatten
 # Compares symbiont assemblages in surviving colonies with others
 #####################################################################
 
@@ -39,7 +39,7 @@ sampling_df <- data.frame(
   ))
 
 # Loads coral size data
-coral_size <- read_csv('data/coral_size.csv')
+coral_size <- read_csv('data/colony_metadata.csv')
 
 ################################################################################
 # Makes dataframe and plots coral size by expedition
@@ -47,10 +47,11 @@ coral_size <- read_csv('data/coral_size.csv')
 
 # Generates a dataframe of the coral size based on when each colony was first sampled
 coral_size_plot <- coral_size %>%
+  filter(host_species == 'Pocillopora grandis') %>%
   group_by(coral_tag, expedition) %>%
   slice_head(n = 1) %>%
   left_join(sampling_df) %>%
-  mutate(colony_width1 = as.numeric(max_colony_width)) %>%
+  filter(!is.na(max_colony_width)) %>%
   ungroup()
 
 ################################################################################
@@ -60,12 +61,13 @@ coral_size_plot <- coral_size %>%
 # List of corals that are larger than expected based on published growth rates
 Larger_than_expected <- coral_size_plot %>%
   filter(expedition == '2023b') %>%
-  filter(!is.na(colony_width1)) %>%
-  filter(colony_width1 > 37.5) # 5 * 7.5 April 2016 to October 2023
+  filter(!is.na(max_colony_width)) %>%
+  filter(max_colony_width > 37.5) # 5 * 7.5 April 2016 to October 2023
 
 # Samples sampled earlier in the heatwave 
-Sampled_early_heatwave <- coral_size_plot %>%
-  filter(!expedition %in% c('2023b'))
+Sampled_early_heatwave <- symportal_df %>%
+  filter(!expedition %in% c('2023b')) %>%
+  filter(host_genus == 'Pocillopora')
 
 # Combines above
 Surviving_colonies <- unique(c(Larger_than_expected$coral_tag, Sampled_early_heatwave$coral_tag))
@@ -92,15 +94,15 @@ ggplot() +
             aes(x = Date, y = estimated_colony_width_cm),
             colour = 'grey4', linetype = 'dashed') + 
   geom_point(data = coral_size_plot, 
-              aes(x = Date, y = colony_width1, colour = Colony_grouping),
+              aes(x = Date, y = max_colony_width, colour = Colony_grouping),
               shape = 21) + 
   geom_vline(xintercept = as.Date(c('2015-05-28', '2016-04-13')),
-             colour = 'firebrick', linetype = 2) +
+             colour = 'orange', linetype = 2) +
   theme_test(base_size = 12) + 
   scale_colour_manual(values = c('grey', 'dodgerblue', '#ee6363')) +
   ylab('Colony width (cm)')
 
-ggsave('figures_tables/FigS6a_coral_size.pdf', height = 100, width = 150, units = "mm")
+ggsave('figures_tables/FigS6a_Coral_size.pdf', height = 100, width = 150, units = "mm")
 
 ################################################################################
 # Makes matrix of ITS2 profile grouping level abundance data per colony
@@ -165,10 +167,10 @@ ggplot() +
   theme_test(base_size = 12) +
   stat_ellipse() +  # Draws an ellipse around each group
   scale_colour_manual(values = c('dodgerblue', 'indianred2')) +
-  xlab(paste0("PC1 (", round(pcoa_result$eig[1],1),")")) +
-  ylab(paste0("PC2 (", round(pcoa_result$eig[2],1),")"))
+  xlab(paste0("Axis 1 (", round(pcoa_result$eig[1],1),")")) +
+  ylab(paste0("Axis 2 (", round(pcoa_result$eig[2],1),")"))
   
-ggsave('figures_tables/FigS6b_survivor_bias.pdf', height = 100, width = 125, units = "mm")
+ggsave('figures_tables/FigS6b_Survivor_bias.pdf', height = 100, width = 125, units = "mm")
 
 #####################################################################
 # Extra plot separating survivors from other colonies for samples first sampled in 2023
@@ -176,6 +178,7 @@ ggsave('figures_tables/FigS6b_survivor_bias.pdf', height = 100, width = 125, uni
 
 # Colonies first sampled in 2023
 First_sampled_2023 <- symportal_df %>%
+  filter(host_genus == 'Pocillopora') %>%
   mutate(First_sampled = expedition) %>%
   arrange(First_sampled) %>%
   group_by(coral_tag) %>%
@@ -202,7 +205,14 @@ ggplot() +
   scale_fill_identity() + 
   theme_test()
   
-ggsave('figures_tables/Fig3c_tracked_colonies_extra.pdf')
+ggsave('figures_tables/Fig3c_Tracked_colonies_extra.pdf')
+
+# Pre-heatwave lineages in samples first sampled in 2023
+symportal_df %>%
+  filter(host_genus == 'Pocillopora') %>%
+  filter(coral_tag %in% First_sampled_2023$coral_tag) %>%
+  filter(Count_freq > 0.5) %>%
+  filter(Profile_cols == '#054a8d')
 
 #####################################################################
 # Some other useful stats
@@ -224,4 +234,3 @@ survivor_check <- symportal_df %>%
   filter(Before_2023 == 'Yes')
 
 #####################################################################
-
