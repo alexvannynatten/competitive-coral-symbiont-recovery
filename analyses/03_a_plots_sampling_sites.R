@@ -1,5 +1,5 @@
 #####################################################################
-# Last updated 2025-05-23 - Alexander Van Nynatten
+# Last updated 2025-09-07 - Alexander Van Nynatten
 # Plots sites surveyed and human disturbance gradient across KI
 #####################################################################
 
@@ -28,7 +28,7 @@ samples_df <- read_csv("data/sample_metadata.csv")
 
 # Location data for the sampling sites
 sites_df <- read_csv("data/survey_metadata.csv") %>%
-  distinct(site_name, pub.name, lat, lon, continous.pressure.2km) %>%
+  distinct(site_name, pub.name, pressure.group, lat, lon, continous.pressure.2km) %>%
   mutate(sqr_pressure = sqrt(continous.pressure.2km)) %>%
   filter(site_name %in% coral_survey_sites) %>%
   mutate(DNA_site = ifelse(site_name %in% samples_df$site_name, 'DNA', 'Survey only')) %>%
@@ -133,6 +133,18 @@ ggplot() +
   scale_size_continuous(range = c(1,6)) + 
   scale_colour_gradient2(low = "#0096C7", mid = '#6E9075', high = "#825F48", midpoint = 40, na.value = NA)
 
-ggsave('figures_tables/FigS1_detailed_map.pdf', width = 180, height = 180, units = 'mm')
+ggsave('figures_tables/FigS1_Detailed_map.pdf', width = 180, height = 180, units = 'mm')
+
+#####################################################################
+# Generates suppl table for disturbance across sites
+#####################################################################
+
+Table_S1 <- sites_df %>%
+  arrange(continous.pressure.2km) %>%
+  data.frame() %>%
+  select(pub.name, continous.pressure.2km, sqr_pressure, pressure.group) %>%
+  rename_with(~ c("site name", "human disturbance", "square root human disturbance", "disturbance category"))
+
+write.csv(Table_S1, 'figures_tables/Table_S1.csv', row.names = FALSE)
 
 #####################################################################
