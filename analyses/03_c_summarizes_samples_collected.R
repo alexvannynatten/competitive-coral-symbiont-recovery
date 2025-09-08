@@ -1,5 +1,5 @@
 #####################################################################
-# Last updated 2025-05-28- Alexander Van Nynatten
+# Last updated 2025-09-07- Alexander Van Nynatten
 # Summarizes the samples collected and surveys conducted by expedition
 #####################################################################
 
@@ -11,7 +11,7 @@ library(tidyverse)
 
 samples_df <- read_csv("data/sample_metadata.csv")
 symportal_df <- read_csv("data/01_symportal_results_df.csv")
-coral_cover_df <- read_csv("figures_tables/Table_S2.csv")
+coral_cover_df <- read_csv("figures_tables/Table_S3.csv")
 
   
 heatwave_df <- data.frame(expedition = c('2013', '2014', '2015a', '2015b', 
@@ -56,6 +56,20 @@ output_data <- heatwave_df %>%
   left_join(sum_quads) %>%
   left_join(sum_dna)
   
-write.csv(output_data, 'figures_tables/Table_S1.csv', row.names = FALSE)
+write.csv(output_data, 'figures_tables/Table_S2.csv', row.names = FALSE)
+
+# number of colonies
+samples_df %>%
+  filter(sample_name %in% symportal_df$sample_name) %>%
+  distinct(coral_tag) %>%
+  nrow(.)
 
 #####################################################################
+
+# Number of tagged Montipora colonies
+samples_df %>%
+  filter(host_genus %in% 'Montipora') %>%
+  filter(expedition %in% c('2014', '2015a', '2015b')) %>%
+  distinct(coral_tag) %>%
+  nrow(.)
+
