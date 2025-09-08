@@ -1,5 +1,5 @@
 #####################################################################
-# Last updated 2025-05-25 - Alexander Van Nynatten
+# Last updated 2025-09-07 - Alexander Van Nynatten
 # Visualizes UniFrac distances and plots profile incidence by expedition
 #####################################################################
 
@@ -15,6 +15,9 @@ library(gridExtra)
 # Tidied symportal output
 symportal_df <- read_csv('data/01_symportal_results_df.csv')
 
+# coral sampling metadata
+coral_df <- read_csv('data/colony_metadata.csv')
+
 # Inter-profile distance matrix for Cladocopium taxa
 C_dist_matrix <- as.matrix(read.table("data/20250527T170756_unifrac_profile_distances_C_sqrt.dist", row.names = 1, sep = '\t'))
 C_dist_matrix <- C_dist_matrix[, -1]
@@ -28,7 +31,7 @@ C_dist_object <- as.dist(C_dist_matrix)
 C_cluster_dend <- hclust(C_dist_object, method = "average")
 C_profile_dend <- as.phylo(C_cluster_dend) # converts to phylo format for plotting
 
-# Clusters the profiles within 0.0025 dissimilarity of eachother
+# Clusters the profiles within 0.0035 dissimilarity of eachother
 hc <- hclust(C_dist_object, method = "average")
 threshold <- 0.0035
 groups <- cutree(hc, h = threshold)
@@ -117,7 +120,7 @@ pC + geom_facet(panel = "Abundance", data = C_abund_df, geom = geom_point,
   scale_colour_identity() +
   scale_size_continuous(range = c(1,7))
 
-ggsave('figures_tables/Fig2b_symbiont_dend.pdf')
+ggsave('figures_tables/Fig2b_Symbiont_dend.pdf')
 
 #####################################################################
 # Line graph of symbiont recovery
@@ -167,7 +170,7 @@ ggplot() +
   theme(legend.position = "none") + 
   ylab('ITS2 profile incidence (%)')
 
-ggsave('figures_tables/Fig2a_symbiont_recovery.pdf', height = 100, width = 110, units = "mm")
+ggsave('figures_tables/Fig2a_Symbiont_recovery.pdf', height = 100, width = 110, units = "mm")
 
 #####################################################################
 # Supplementary plots of relative read abundance by sample and expedition
@@ -183,6 +186,10 @@ profile_groups_suppl_df <- group_df %>%
   left_join(group_cols_supp) %>%
   select(Profile, Profile_cols)
 
+# Data for colonies dead or missing to add to figure
+dead_coral_df <- coral_df %>%
+  filter(!health_status == 'alive') %>%
+  mutate(health_status_shape = ifelse(health_status == 'alive not sampled', '-', 'x'))
 
 # Loop to generate the supplementary figures showing Profile RRA by coral colony / expedition
 j <- 2 # for supp figure file name
@@ -209,14 +216,32 @@ for(i in c('Pocillopora', 'Montipora')){
     supp_fig_plot_1 <- supp_fig_plot %>%
       filter(level_tag %in% first_half)
       
-    supp_fig_plot_2 <- supp_fig_plot%>%
+    coral_status_plot_1 <- dead_coral_df %>%
+      filter(coral_tag %in% supp_fig_plot_1$coral_tag) %>%
+      left_join(supp_fig_plot_1 %>%
+                  select(coral_tag, level_tag) %>%
+                  distinct())
+    
+    supp_fig_plot_2 <- supp_fig_plot %>%
       filter(!level_tag %in% first_half)
       
+    coral_status_plot_2 <- dead_coral_df %>%
+      filter(coral_tag %in% supp_fig_plot_2$coral_tag) %>%
+      left_join(supp_fig_plot_2 %>%
+                  select(coral_tag, level_tag) %>%
+                  distinct())
+    
     p1 <- ggplot() + 
       geom_col(data = supp_fig_plot_1,
                aes(x = Count_freq, level_tag, 
                    fill = Profile_cols),
                colour = 'black') + 
+      
+      geom_text(data = coral_status_plot_1,
+               aes(x = 0.5, level_tag, 
+                   label = health_status_shape),
+               colour = 'grey8', size = 2) + 
+      
       facet_grid(. ~ expedition, scales = 'free_x', drop = FALSE) + 
       theme_test() + 
       scale_fill_identity() +
@@ -230,13 +255,24 @@ for(i in c('Pocillopora', 'Montipora')){
         axis.text.x = element_text(size = 5),
         axis.text.y = element_text(size = 5)
       ) + 
-      theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+      theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + 
+      theme(
+        strip.text.x = element_text(angle = 90),
+        strip.background = element_blank()
+        )
     
     p2 <- ggplot() + 
+      
       geom_col(data = supp_fig_plot_2,
                aes(x = Count_freq, level_tag, 
                    fill = Profile_cols),
                colour = 'black') + 
+      
+      geom_text(data = coral_status_plot_2,
+                aes(x = 0.5, level_tag, 
+                    label = health_status_shape),
+                colour = 'grey8', size = 2) + 
+      
       facet_grid(. ~ expedition, scales = 'free_x', drop = FALSE) + 
       theme_test() + 
       scale_fill_identity() +
@@ -250,7 +286,11 @@ for(i in c('Pocillopora', 'Montipora')){
         axis.text.x = element_text(size = 5),
         axis.text.y = element_text(size = 5)
       ) + 
-      theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+      theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + 
+      theme(
+        strip.text.x = element_text(angle = 90),
+        strip.background = element_blank()
+      )
     
     p_combined <- grid.arrange(p1, p2, ncol = 2)
     
@@ -284,6 +324,38 @@ ggplot() +
   theme_void() + 
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1, size = 3))
 
-ggsave('figures_tables/legend_for_S2_S3.pdf')
+ggsave('figures_tables/Legend_for_S2_S3.pdf')
 
 #####################################################################
+# Colony size ranges for sampled colonies of both species
+#####################################################################
+
+coral_df %>%
+  filter(!is.na(max_colony_width)) %>%
+  filter(health_status == 'alive') %>%
+  group_by(host_species) %>%
+  summarize(
+    min_size = min(max_colony_width),
+    med_size = median(max_colony_width),
+    max_size = max(max_colony_width)
+  )
+  
+#####################################################################
+# Number of pre-heatwave colonies sampled post-heatwave
+#####################################################################
+
+preh_cols <- symportal_df %>%
+  filter(expedition_class %in% c('1_before')) %>%
+  filter(!expedition == '2013') %>%
+  distinct(coral_tag)
+
+nrow(preh_cols)
+
+symportal_df %>%
+  filter(expedition_class %in% c('3_after', '4_longafter')) %>%
+  distinct(coral_tag) %>%
+  filter(coral_tag %in% preh_cols$coral_tag)
+
+
+#####################################################################
+
