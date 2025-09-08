@@ -18,7 +18,7 @@ _figures_tables:_ find output from analyses
 04_symbiont_lineages.csv - Symbiont lineage classifications based on Unifrac distances \
 20250527T170756_unifrac_profile_distances_C_sqrt.dist - SymPortal output for Cladocopium interprofile distances \
 20250527T170756.profiles.absolute.abund_and_meta.txt - SymPortal output for sequence counts of ITS2 profiles by sample \
-coral_size.csv - Maximum width (in cm) of tagged Pocillopora grandis colonies \
+colony_metadata.csv - Maximum width (in cm) of tagged coral colonies and colony health status
 coralnet_labels.csv - Label set for CoralNet classifications \
 coralnet_raw_5July2024_2013-2023b.csv - CoralNet output for benthic \
 dhw_5km_97a5_e43d_e9ef.csv - SST and DHW data from Coral Reef Watch for Kiritimati \
