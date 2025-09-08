@@ -1,5 +1,5 @@
 #####################################################################
-# Last updated 2025-05-23 - Alexander Van Nynatten
+# Last updated 2025-09-07 - Alexander Van Nynatten
 # Tidies symportal output and incorperates sample and survey metadata
 #####################################################################
 
@@ -113,7 +113,7 @@ Suppl_table <- symportal_df %>%
   select(!level) %>%
   replace(is.na(.), 0)
 
-write.csv(Suppl_table, 'figures_tables/Table_S3.csv', row.names = FALSE)
+write.csv(Suppl_table, 'figures_tables/Table_S4.csv', row.names = FALSE)
 
 #####################################################################
 
