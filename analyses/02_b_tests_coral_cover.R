@@ -1,5 +1,5 @@
 #####################################################################
-# Last updated 2025-01-31 - Alexander Van Nynatten
+# Last updated 2025-09-07 - Alexander Van Nynatten
 # Tests differences in coral cover across expeditions and plots results
 #####################################################################
 
@@ -36,7 +36,7 @@ supp_table_1 <- coral_cover_df %>%
   select(-pressure_level) %>%
   replace(is.na(.), 0)
   
-write.csv(supp_table_1, 'figures_tables/Table_S2.csv', row.names = FALSE)
+write.csv(supp_table_1, 'figures_tables/Table_S3.csv', row.names = FALSE)
 
 ################################################################################
 ## Summarizes coral cover at each site by expedition for comparisons of recovery
@@ -176,5 +176,27 @@ ggsave('figures_tables/FigS5_Cover_change.pdf', height = 100, width = 150, units
 p2 %>%
   group_by(Species) %>%
   reframe(Med_change_in_prop_cover = median(change_in_prop_cover))
+
+################################################################################
+# Summarizes change in coral cover before and after heatwave
+################################################################################
+
+# Supplementary table
+table_S5 <- p1 %>%
+  filter(expedition_class %in% c('1_before', '3_after')) %>%
+  group_by(pressure_level, Species, pub.name, expedition_class) %>%
+  summarize(med_Percent_sp_cover = round(median(Percent_sp_cover),2)) %>%
+  ungroup() %>%
+  pivot_wider(names_from = expedition_class, values_from = med_Percent_sp_cover) %>%
+  mutate(change_in_prop_cover = (`1_before` - `3_after`)/`1_before`*100) %>%
+  filter(change_in_prop_cover > 0) %>%
+  mutate(change_in_prop_cover = round(change_in_prop_cover,2)) %>%
+  mutate(Species = ifelse(Species == 'Montipora.foliose',
+                          'Montipora aequituberculata',
+                          'Pocillopora grandis')) %>%
+  arrange(Species, pressure_level) %>%
+  select(Species, pub.name, `1_before`, `3_after`, change_in_prop_cover)
+
+write.csv(table_S5, 'figures_tables/Table_S5.csv', row.names = FALSE)
 
 ################################################################################
