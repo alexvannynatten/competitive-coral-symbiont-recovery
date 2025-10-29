@@ -1,12 +1,38 @@
-"expedition","expedition_class","expedition_date","total photoquadrats","Montipora aequituberculata DNA samples","Pocillopora grandis DNA samples"
-"2013","1_before","17 July 2013 - 7 August 2013",490,25,31
-"2014","1_before","20 August 2014 - 10 September 2014",253,110,103
-"2015a","1_before","21 January 2015 - 4 Febrary 2015",140,34,32
-"2015b","1_before","28 April 2015 - 12 May 2015",224,66,73
-"2015c","2_during","1 July 2015 - 28 July 2015",415,101,101
-"2016a","2_during","16 March 2016 - 6 April 2016",413,1,5
-"2016b","3_after","9 November 2016 - 23 November 2016",360,1,4
-"2017","3_after","5 July 2017 - 2 August 2017",757,1,9
-"2018","3_after","13 June 2018 - 4 July 2018",337,1,13
-"2019","3_after","17 July 2019 - 14 August 2019",400,2,21
-"2023","4_longafter","6 September 2023 - 4 october 2023",1076,3,119
+"site name","human disturbance","square root human disturbance","disturbance category"
+"VL3",0,0,"Very low"
+"VL6",0,0,"Very low"
+"VL9",0,0,"Very low"
+"VL1",0,0,"Very low"
+"VL11",0,0,"Very low"
+"VL13",0,0,"Very low"
+"VL8",0,0,"Very low"
+"VL2",0,0,"Very low"
+"VL5",0,0,"Very low"
+"VL7",0,0,"Very low"
+"VL4",0,0,"Very low"
+"VL12",0,0,"Very low"
+"L5",404.2760632,20.1066173982597,"Low"
+"L6",808.5521265,28.4350510198241,"Low"
+"L1",808.5521265,28.4350510198241,"Low"
+"L7",808.5521265,28.4350510198241,"Low"
+"L4",808.5521265,28.4350510198241,"Low"
+"L3",808.5521265,28.4350510198241,"Low"
+"L2",808.5521265,28.4350510198241,"Low"
+"M11",1116.031547,33.4070583410153,"Medium"
+"M4",1159.552126,34.0521970803647,"Medium"
+"M7",1212.82819,34.825682907877,"Medium"
+"M1",1212.82819,34.825682907877,"Medium"
+"M9",1212.82819,34.825682907877,"Medium"
+"M8",1212.82819,34.825682907877,"Medium"
+"M12",1212.82819,34.825682907877,"Medium"
+"M3",1212.82819,34.825682907877,"Medium"
+"M2",1212.82819,34.825682907877,"Medium"
+"M6",1563.82819,39.5452676056188,"Medium"
+"M10",1613.276063,40.1656079625343,"Medium"
+"M5",1616.723937,40.2085057792502,"Medium"
+"H2",2074.674393,45.548593754363,"High"
+"H1",2425.276063,49.2470919242954,"High"
+"VH2",4860.745702,69.7190483440501,"Very high"
+"VH3",5085.684783,71.3139872886098,"Very high"
+"VH4",5328.680152,72.9978092274008,"Very high"
+"VH1",7276,85.2994724485445,"Very high"
